@@ -1,0 +1,7 @@
+extends layout
+block headAddon
+    link(rel='stylesheet', href='/stylesheets/flag-icon.min.css')
+block pageRoute
+    script.
+        var locals = !{JSON.stringify(locals)}
+        var pageRoute = 'profile'
