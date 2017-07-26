@@ -12,7 +12,6 @@ module.exports = function (express) {
             locals['err'] = [locals['err']]
         }
 
-
         return req.getValidationResult().then(async function(result) {
             if (!result.isEmpty()) {
                 locals['err'].push(result.array()[0]['msg']);
@@ -82,33 +81,36 @@ module.exports = function (express) {
                             locals[customAsName] = trueValue;
                         }
 
-                        //if (_.isArray(trueValue)) {
-                        //    let lastValue = _.last(trueValue);
-                        //    if (_.isString(lastValue) && lastValue) {
-                        //        let pattern = _.without(_.split(lastValue, " "), "");
-                        //        if (pattern && pattern.length == 2 && pattern[0].toLowerCase() == 'as') {
-                        //            customAsName = pattern[1];
-                        //            trueValue = _.dropRight(trueValue)
-                        //            if (trueValue.length == 1) {
-                        //                trueValue = trueValue[0]
-                        //            }
-                        //        }
-                        //    }
-                        //}
-
-                        locals[customAsName] = trueValue;
                         if (req.user) {
                             locals['user'] = req.user
                         }
                     }
 
-                    return locals
                 }
                 catch (e) {
-                    locals['err'].push(e);
+                    locals['err'].push( _.isError(e) ? e.message : e.toString());
+
+                    console.log('API Raise: ', e)
+                }
+                finally {
+                    console.log('locals: ,', locals);
                     return locals
                 }
             }
-        });
+        })
+    };
+
+    express.response.apiValidation = async function(req, cb) {
+        var res = this;
+        var apiResult = {code: 1};
+        let locals = await res.renderWithValidation(req, cb);
+        apiResult.data = locals;
+        if (locals['err'] && locals['err'].length > 0) {
+            apiResult['code'] = 0;
+            apiResult['err'] = locals['err'];
+        }
+        delete locals['err']
+
+        return apiResult
     }
 };

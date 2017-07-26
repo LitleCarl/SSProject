@@ -1,4 +1,5 @@
 var express = require('express');
+var util = require('util');
 require('./extensions/expressExtension')(express);
 
 var path = require('path');
@@ -11,6 +12,7 @@ var session = require('express-session')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var api = require('./routes/api/');
 
 var app = express();
 
@@ -46,7 +48,26 @@ app.use(session({
   saveUninitialized: true
 }))
 
+
+app.use(function (req, res, next) {
+  console.log('-->->->->->->->->->->->->->-------------------')
+  console.log('                                              |')
+  console.log('                                              |')
+
+  console.log(`req.body: ${util.inspect(req.body)}`)
+  console.log(`req.query:${util.inspect(req.query)}`)
+  console.log(`req.params:${util.inspect(req.params)}`)
+  console.log(`req.headers:${util.inspect(req.params)}`)
+
+  console.log('                                              |')
+  console.log('                                              |')
+  console.log('--<-<-<-<-<-<-<-<-<-<-<-<-<-------------------')
+
+  next()
+});
+
 app.use('/', users);
+app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
             }})
     };
 
+    User.prototype.toJSON =  function () {
+        var values = Object.assign({}, this.get());
+        delete values.password;
+        return values;
+    }
+
     // 登录
     User.signIn = async (email, password)=>{
         return await User.findOne({where: {

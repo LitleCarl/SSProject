@@ -489,9 +489,6 @@ const Profile = module.exports = class Profile extends React.Component {
 
     render () {
         var self = this;
-        console.log('regionsowned', self.props.regionsOwned)
-        console.log('regions', self.props.regions)
-
         return (
             <section className="hero">
                 <div className="hero-body">
